@@ -1,0 +1,23 @@
+# General
+node_modules/
+.DS_Store
+
+# Environment variables
+.env
+*.env
+backend/.env
+frontend/.env
+
+# Build outputs
+frontend/dist/
+backend/dist/
+
+# Prisma (local DB files, if any)
+prisma/*.db
+prisma/*.sqlite
+prisma/*.db-journal
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
