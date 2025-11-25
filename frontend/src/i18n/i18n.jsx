@@ -1,0 +1,147 @@
+import { createContext, useContext, useMemo, useState } from 'react'
+
+const strings = {
+  it: {
+    'home.hero.title': 'Benvenuto su compapiso!',
+    'home.hero.tagline.before': 'Trova il tuo coinquilino ideale in',
+    'home.hero.tagline.emphasis': 'pochi minuti',
+    'home.hero.cta.search': 'Inizia a cercare 🚀',
+    'home.hero.cta.viewRooms': 'Vedi camere 🏠',
+    'home.features.title': 'Perché RoomMatch?',
+    'home.features.subtitle': 'Il modo più intelligente e rapido per trovare il tuo coinquilino ideale',
+    'home.features.match.title': 'Trova il tuo Match',
+    'home.features.match.description': 'Sistema di matching intelligente basato sulla compatibilità',
+    'home.features.rooms.title': 'Camere disponibili',
+    'home.features.rooms.description': 'Esplora centinaia di opzioni di alloggio',
+    'home.features.chat.title': 'Chat in tempo reale',
+    'home.features.chat.description': 'Connettiti istantaneamente con i tuoi match',
+    'home.features.verified.title': 'Profili verificati',
+    'home.features.verified.description': 'Utenti reali e verificati per la tua sicurezza',
+    'home.benefits.secure.title': '100% Sicuro',
+    'home.benefits.secure.description': 'Verifica dell’identità',
+    'home.benefits.fast.title': 'Veloce',
+    'home.benefits.fast.description': 'Trova match in pochi minuti',
+    'home.benefits.community.title': 'Comunità',
+    'home.benefits.community.description': 'Migliaia di utenti attivi',
+    'home.benefits.quality.title': 'Qualità',
+    'home.benefits.quality.description': '95% di soddisfazione',
+    'home.stats.activeUsers': 'Utenti attivi',
+    'home.stats.successMatches': 'Match riusciti',
+    'home.stats.rooms': 'Camere',
+    'home.stats.satisfaction': 'Soddisfazione',
+    'home.cta.title': 'Pronto a trovare il tuo match perfetto?',
+    'home.cta.subtitle': 'Unisciti a migliaia di persone che hanno già trovato il coinquilino ideale',
+    'home.cta.button': 'Inizia ora 🎯',
+    'discover.title': 'Esplora',
+    'discover.compatibility': 'Compatibilità',
+    'discover.moveDate': 'Vuole trasferirsi dal',
+    'discover.budget': 'Budget',
+    'discover.student': 'Studente',
+    'origin': 'Origine',
+    'info': 'Informazioni',
+    'interests': 'Interessi',
+    'languages': 'Lingue',
+    'compatibilityDetail': 'Dettaglio Compatibilità',
+    'lifestyle.activitySocial': 'Attività Sociali',
+    'lifestyle.pets': 'Animali',
+    'lifestyle.guests': 'Ospiti',
+    'lifestyle.presenceHome': 'Presenza Casa',
+    'lifestyle.smokes': 'Fumo',
+    'lifestyle.cleaning': 'Pulizia',
+    'actions.like': 'Mi piace',
+    'actions.nope': 'Passa',
+    'actions.report': 'Segnala',
+    'tabs.matches': 'Match',
+    'tabs.incoming': 'A chi piaci',
+    'tabs.outgoing': 'I tuoi like',
+    'sidebar.discover': 'Esplora',
+    'sidebar.match': 'Match',
+    'sidebar.profile': 'Profilo',
+    'sidebar.myListings': 'I miei annunci',
+    'sidebar.messages': 'Messaggi',
+  },
+  es: {
+    'home.hero.title': 'Bienvenido a compapiso!',
+    'home.hero.tagline.before': 'Encuentra a tu compañero ideal en',
+    'home.hero.tagline.emphasis': 'pocos minutos',
+    'home.hero.cta.search': 'Comienza a buscar 🚀',
+    'home.hero.cta.viewRooms': 'Ver habitaciones 🏠',
+    'home.features.title': '¿Por qué RoomMatch?',
+    'home.features.subtitle': 'La forma más inteligente y rápida de encontrar a tu compañero ideal',
+    'home.features.match.title': 'Encuentra tu Match',
+    'home.features.match.description': 'Sistema de matching inteligente basado en compatibilidad',
+    'home.features.rooms.title': 'Habitaciones disponibles',
+    'home.features.rooms.description': 'Explora cientos de opciones de alojamiento',
+    'home.features.chat.title': 'Chat en tiempo real',
+    'home.features.chat.description': 'Conéctate instantáneamente con tus matches',
+    'home.features.verified.title': 'Perfiles verificados',
+    'home.features.verified.description': 'Usuarios reales y verificados para tu seguridad',
+    'home.benefits.secure.title': '100% Seguro',
+    'home.benefits.secure.description': 'Verificación de identidad',
+    'home.benefits.fast.title': 'Rápido',
+    'home.benefits.fast.description': 'Encuentra matches en pocos minutos',
+    'home.benefits.community.title': 'Comunidad',
+    'home.benefits.community.description': 'Miles de usuarios activos',
+    'home.benefits.quality.title': 'Calidad',
+    'home.benefits.quality.description': '95% de satisfacción',
+    'home.stats.activeUsers': 'Usuarios activos',
+    'home.stats.successMatches': 'Matches logrados',
+    'home.stats.rooms': 'Habitaciones',
+    'home.stats.satisfaction': 'Satisfacción',
+    'home.cta.title': '¿Listo para encontrar tu match perfecto?',
+    'home.cta.subtitle': 'Únete a miles de personas que ya han encontrado al compañero ideal',
+    'home.cta.button': 'Empieza ahora 🎯',
+    'discover.title': 'Descubrir',
+    'discover.compatibility': 'Compatibilidad',
+    'discover.moveDate': 'Quiere mudarse desde',
+    'discover.budget': 'Presupuesto',
+    'discover.student': 'Estudiante',
+    'origin': 'Origen',
+    'info': 'Información',
+    'interests': 'Intereses',
+    'languages': 'Idiomas',
+    'compatibilityDetail': 'Detalle Compatibilidad',
+    'lifestyle.activitySocial': 'Actividad Social',
+    'lifestyle.pets': 'Animales',
+    'lifestyle.guests': 'Huéspedes',
+    'lifestyle.presenceHome': 'Presencia Casa',
+    'lifestyle.smokes': 'Fuma',
+    'lifestyle.cleaning': 'Limpieza',
+    'actions.like': 'Me gusta',
+    'actions.nope': 'Pasar',
+    'actions.report': 'Reportar',
+    'tabs.matches': 'Match',
+    'tabs.incoming': 'A quién gustas',
+    'tabs.outgoing': 'Tus likes',
+    'sidebar.discover': 'Descubrir',
+    'sidebar.match': 'Match',
+    'sidebar.profile': 'Perfil',
+    'sidebar.myListings': 'Mis anuncios',
+    'sidebar.messages': 'Mensajes',
+  },
+}
+
+const I18nContext = createContext({ locale: 'it', t: (k) => k, setLocale: () => {} })
+
+export const I18nProvider = ({ children, initialLocale = 'it' }) => {
+  const [locale, setLocale] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lang')
+      return saved || initialLocale
+    } catch {
+      return initialLocale
+    }
+  })
+  const value = useMemo(() => ({
+    locale,
+    setLocale,
+    t: (key) => (strings[locale] && strings[locale][key]) || key,
+  }), [locale])
+  try {
+    document.documentElement.lang = locale
+    localStorage.setItem('lang', locale)
+  } catch {}
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
+}
+
+export const useT = () => useContext(I18nContext)
