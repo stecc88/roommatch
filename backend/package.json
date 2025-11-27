@@ -1,8 +1,8 @@
 {
-    "name": "roommatch-backend",
-    "version": "1.0.0",
-    "description": "Backend for RoomMatch application",
-    "main": "src/server.js",
+  "name": "roommatch-backend",
+  "version": "1.0.0",
+  "description": "Backend for RoomMatch application",
+  "main": "src/server.js",
   "type": "module",
   "engines": {
     "node": ">=20 <21"
@@ -10,14 +10,13 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio"
   },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.10.2",
     "prisma": "^5.10.2",
@@ -30,7 +29,6 @@
     "socket.io": "^4.7.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0",
-    
+    "nodemon": "^3.1.0"
   }
 }
