@@ -13,8 +13,14 @@ import { authenticateToken } from './middleware/auth.middleware.js';
 
 const app = express();
 const httpServer = createServer(app);
+const envOrigins = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean)
+
 const allowedOrigins = [
-    process.env.FRONTEND_URL || 'http://localhost:5173',
+    ...envOrigins,
+    'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:5175',
 ]
