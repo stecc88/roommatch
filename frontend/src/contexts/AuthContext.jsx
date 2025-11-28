@@ -49,8 +49,10 @@ export const AuthProvider = ({ children }) => {
       navigate('/discover')
       return { success: true }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Error al iniciar sesión')
-      return { success: false, error: error.response?.data?.error }
+      const err = error?.response?.data?.error
+      const msg = typeof err === 'string' ? err : (err?.message || 'Error al iniciar sesión')
+      toast.error(msg)
+      return { success: false, error: msg }
     }
   }
 
@@ -65,8 +67,10 @@ export const AuthProvider = ({ children }) => {
       navigate('/discover')
       return { success: true }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Error al registrar')
-      return { success: false, error: error.response?.data?.error }
+      const err = error?.response?.data?.error
+      const msg = typeof err === 'string' ? err : (err?.message || 'Error al registrar')
+      toast.error(msg)
+      return { success: false, error: msg }
     }
   }
 

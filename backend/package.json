@@ -7,12 +7,14 @@
     "node": ">=20 <21"
   },
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
-    "prisma:generate": "prisma generate",
-    "prisma:push": "prisma db push",
-    "prisma:studio": "prisma studio"
-  },
+  "start": "node src/server.js",
+  "dev": "nodemon src/server.js",
+  "prisma:generate": "npx prisma generate",
+  "prisma:push": "npx prisma db push",
+  "prisma:studio": "npx prisma studio",
+  "postinstall": "npx prisma generate"
+}
+,
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "bcryptjs": "^2.4.3",
