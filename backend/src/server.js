@@ -1,15 +1,8 @@
 import dotenv from 'dotenv';
-import { execSync } from 'child_process';
 
 dotenv.config();
 
-try {
-  execSync('npx prisma generate', { stdio: 'inherit' });
-} catch (e) {
-  console.error('Prisma generate failed');
-}
-
-const { httpServer } = await import('./app.js');
+import { httpServer } from './app.js';
 
 const PORT = process.env.PORT || 3000;
 
