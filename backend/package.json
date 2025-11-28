@@ -1,7 +1,6 @@
 {
   "name": "roommatch-backend",
   "version": "1.0.0",
-  "description": "Backend for RoomMatch application",
   "main": "src/server.js",
   "type": "module",
   "engines": {
@@ -12,11 +11,9 @@
     "dev": "nodemon src/server.js",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "postinstall": "prisma generate"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "bcryptjs": "^2.4.3",
