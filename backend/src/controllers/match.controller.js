@@ -5,6 +5,9 @@ export const like = async (req, res) => {
     const fromUserId = req.user.id;
 
     try {
+        if (fromUserId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json({ success: true, match: null });
+        }
         // Create the like
         await prisma.like.create({
             data: {
@@ -148,6 +151,11 @@ export const getMatches = async (req, res) => {
 export const getIncomingLikes = async (req, res) => {
     const userId = req.user.id;
     try {
+        if (userId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json([
+                { id: 5001, user: { id: 1002, name: 'Marco Demo', avatar: 'https://i.pravatar.cc/300?u=marco', bio: 'Amo la tecnologia' }, createdAt: new Date().toISOString() }
+            ]);
+        }
         const likes = await prisma.like.findMany({
             where: { toUserId: userId },
             include: { fromUser: { select: { id: true, name: true, avatar: true, bio: true } } }
@@ -169,6 +177,11 @@ export const getIncomingLikes = async (req, res) => {
 export const getOutgoingLikes = async (req, res) => {
     const userId = req.user.id;
     try {
+        if (userId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json([
+                { id: 5002, user: { id: 1001, name: 'Alice Demo', avatar: 'https://i.pravatar.cc/300?u=alice', bio: 'Mi piace lo sport' }, createdAt: new Date().toISOString() }
+            ]);
+        }
         const likes = await prisma.like.findMany({
             where: { fromUserId: userId },
             include: { toUser: { select: { id: true, name: true, avatar: true, bio: true } } }

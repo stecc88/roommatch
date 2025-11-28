@@ -53,6 +53,14 @@ export const getConversations = async (req, res) => {
 export const getMessages = async (req, res) => {
     const { matchId } = req.params;
     try {
+        if (req.user?.id === -1 || req.user?.email?.endsWith('@demo.com')) {
+            const id = parseInt(matchId)
+            const demo = [
+                { id: 1, matchId: id, senderId: 1002, receiverId: -1, content: 'Ciao! 👋', createdAt: new Date().toISOString(), sender: { id: 1002, name: 'Marco Demo', avatar: 'https://i.pravatar.cc/300?u=marco' } },
+                { id: 2, matchId: id, senderId: -1, receiverId: 1002, content: 'Hola! ¿Cómo estás?', createdAt: new Date().toISOString(), sender: { id: -1, name: 'Demo User', avatar: 'https://i.pravatar.cc/300?u=demo' } },
+            ]
+            return res.json(demo)
+        }
         const messages = await prisma.message.findMany({
             where: { matchId: parseInt(matchId) },
             orderBy: { createdAt: 'asc' },
@@ -70,6 +78,18 @@ export const sendMessage = async (req, res) => {
     const senderId = req.user.id;
 
     try {
+        if (senderId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            const message = {
+                id: Math.floor(Math.random() * 100000),
+                matchId: parseInt(matchId),
+                senderId,
+                receiverId: parseInt(receiverId),
+                content,
+                createdAt: new Date().toISOString(),
+                sender: { id: senderId, name: 'Demo User', avatar: 'https://i.pravatar.cc/300?u=demo' }
+            }
+            return res.json(message)
+        }
         const message = await prisma.message.create({
             data: {
                 matchId: parseInt(matchId),
@@ -98,6 +118,9 @@ export const markAsRead = async (req, res) => {
     const { matchId } = req.params;
     const userId = req.user.id;
     try {
+        if (userId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json({ success: true })
+        }
         await prisma.message.updateMany({
             where: { matchId: parseInt(matchId), receiverId: userId, read: false },
             data: { read: true }
