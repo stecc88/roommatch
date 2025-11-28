@@ -18,16 +18,20 @@ const envOrigins = (process.env.FRONTEND_URL || '')
   .map(s => s.trim())
   .filter(Boolean)
 
-const allowedOrigins = [
-    ...envOrigins,
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:5175',
-]
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true
+  if (envOrigins.includes(origin)) return true
+  if (/^https?:\/\/.*\.vercel\.app$/.test(origin)) return true
+  if (origin.startsWith('http://localhost:')) return true
+  return false
+}
 
 const io = new Server(httpServer, {
     cors: {
-        origin: allowedOrigins,
+        origin: (origin, callback) => {
+          if (isAllowedOrigin(origin)) return callback(null, true)
+          callback(new Error('Not allowed by CORS'))
+        },
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     }
@@ -46,7 +50,14 @@ io.on('connection', (socket) => {
     });
 });
 
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(cors({ origin: (origin, callback) => {
+  if (isAllowedOrigin(origin)) return callback(null, true)
+  callback(new Error('Not allowed by CORS'))
+}, credentials: true }));
+app.options('*', cors({ origin: (origin, callback) => {
+  if (isAllowedOrigin(origin)) return callback(null, true)
+  callback(new Error('Not allowed by CORS'))
+}, credentials: true }))
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
