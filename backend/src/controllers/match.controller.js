@@ -105,6 +105,16 @@ export const getMatches = async (req, res) => {
     const userId = req.user.id;
 
     try {
+        if (userId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json([
+                {
+                    id: 9001,
+                    otherUser: { id: 1001, name: 'Alice Demo', avatar: 'https://i.pravatar.cc/300?u=alice' },
+                    listingId: null,
+                    createdAt: new Date().toISOString()
+                }
+            ]);
+        }
         const matches = await prisma.match.findMany({
             where: {
                 OR: [

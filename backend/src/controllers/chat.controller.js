@@ -4,6 +4,16 @@ export const getConversations = async (req, res) => {
     const userId = req.user.id;
 
     try {
+        if (userId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json([
+                {
+                    id: 7001,
+                    otherUser: { id: 1002, name: 'Marco Demo', avatar: 'https://i.pravatar.cc/300?u=marco' },
+                    lastMessage: { id: 1, content: 'Ciao! 👋', createdAt: new Date().toISOString() },
+                    unreadCount: 0
+                }
+            ]);
+        }
         const matches = await prisma.match.findMany({
             where: {
                 OR: [

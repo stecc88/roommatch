@@ -4,6 +4,21 @@ import { Prisma } from '@prisma/client'
 export const getProfile = async (req, res) => {
     const userId = req.user.id;
     try {
+        if (userId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json({
+                id: -1,
+                email: req.user.email || 'demo@demo.com',
+                name: req.user.name || 'Demo User',
+                role: req.user.role || 'SEEKER',
+                bio: 'Cuenta demo',
+                avatar: 'https://i.pravatar.cc/300?u=demo',
+                profilePhotos: [
+                    'https://i.pravatar.cc/300?u=demo-1',
+                    'https://i.pravatar.cc/300?u=demo-2',
+                ],
+                listings: [],
+            });
+        }
         const user = await prisma.user.findUnique({
             where: { id: userId },
             include: {
@@ -53,6 +68,43 @@ export const getDiscover = async (req, res) => {
     const { limit = 20, offset = 0, city, role, mode } = req.query;
 
     try {
+        if (userId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            const demoCandidates = [
+                {
+                    id: 1001,
+                    name: 'Alice Demo',
+                    avatar: 'https://i.pravatar.cc/300?u=alice',
+                    ciudadBusquedaPiso: 'Milano',
+                    quiereMudarseDesde: null,
+                    presupuestoAproximado: 650,
+                    occupation: 'Studente',
+                    universidadEscuela: 'Politecnico di Milano',
+                    bio: 'Mi piace fare sport e cucinare',
+                    lifestyle: { smoker: false, pets: false },
+                    interests: ['Musica', 'Sport'],
+                    languages: ['Italiano', 'Inglese'],
+                    compatibility: 85,
+                    profilePhotos: ['https://i.pravatar.cc/300?u=alice-1','https://i.pravatar.cc/300?u=alice-2'],
+                },
+                {
+                    id: 1002,
+                    name: 'Marco Demo',
+                    avatar: 'https://i.pravatar.cc/300?u=marco',
+                    ciudadBusquedaPiso: 'Roma',
+                    quiereMudarseDesde: null,
+                    presupuestoAproximado: 700,
+                    occupation: 'Developer',
+                    universidadEscuela: 'Sapienza',
+                    bio: 'Amo la tecnologia e i viaggi',
+                    lifestyle: { smoker: false, pets: true },
+                    interests: ['Tecnologia', 'Viaggi'],
+                    languages: ['Italiano', 'Inglese'],
+                    compatibility: 78,
+                    profilePhotos: ['https://i.pravatar.cc/300?u=marco-1','https://i.pravatar.cc/300?u=marco-2'],
+                },
+            ];
+            return res.json(demoCandidates);
+        }
         const me = await prisma.user.findUnique({ where: { id: userId } });
 
         const likedIds = await prisma.like.findMany({
