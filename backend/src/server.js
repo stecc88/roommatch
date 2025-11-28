@@ -1,4 +1,3 @@
-import { httpServer } from './app.js';
 import dotenv from 'dotenv';
 import { execSync } from 'child_process';
 
@@ -9,6 +8,8 @@ try {
 } catch (e) {
   console.error('Prisma generate failed');
 }
+
+const { httpServer } = await import('./app.js');
 
 const PORT = process.env.PORT || 3000;
 
