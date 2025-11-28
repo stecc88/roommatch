@@ -96,9 +96,10 @@ const Login = () => {
           <div className="mt-4 grid grid-cols-2 gap-4">
             <button
               type="button"
-              onClick={() => {
-                setValue('email', 'owner1@demo.com');
-                setValue('password', 'password123');
+              onClick={async () => {
+                setLoading(true)
+                await login('owner1@demo.com', 'password123')
+                setLoading(false)
               }}
               className="btn bg-gray-200 text-gray-700 text-sm"
             >
@@ -106,9 +107,10 @@ const Login = () => {
             </button>
             <button
               type="button"
-              onClick={() => {
-                setValue('email', 'seeker1@demo.com');
-                setValue('password', 'password123');
+              onClick={async () => {
+                setLoading(true)
+                await login('seeker1@demo.com', 'password123')
+                setLoading(false)
               }}
               className="btn bg-gray-200 text-gray-700 text-sm"
             >
