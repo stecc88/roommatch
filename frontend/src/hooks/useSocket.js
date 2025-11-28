@@ -11,7 +11,7 @@ const useSocket = () => {
     useEffect(() => {
         if (!user) return
 
-        const base = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || window.location.origin
+        const base = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_WS_URL || import.meta.env.VITE_API_URL || window.location.origin
         let socket = io(base, {
             path: '/socket.io',
             transports: ['websocket', 'polling'],
@@ -85,7 +85,7 @@ const useSocket = () => {
 
         socket.on('connect_error', (err) => {
             try {
-                const fallback = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || 'http://localhost:3001'
+                const fallback = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_WS_URL || import.meta.env.VITE_API_URL || 'http://localhost:3001'
                 socket.disconnect()
                 socket = io(fallback, {
                     path: '/socket.io',

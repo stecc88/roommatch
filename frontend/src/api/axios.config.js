@@ -1,7 +1,10 @@
 import axios from 'axios'
 // Configura Axios con baseURL, auth y manejo de errores
 
-const API_URL = import.meta.env.VITE_API_URL || '/api'
+const RAW_API_URL = import.meta.env.VITE_API_URL || '/api'
+const API_URL = RAW_API_URL.startsWith('http')
+  ? (RAW_API_URL.endsWith('/api') ? RAW_API_URL : RAW_API_URL.replace(/\/$/, '') + '/api')
+  : RAW_API_URL
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
