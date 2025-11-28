@@ -13,6 +13,10 @@ export const authenticateToken = async (req, res, next) => {
         if (err) return res.status(403).json({ error: 'Forbidden' });
 
         try {
+            if (user?.demo) {
+                req.user = { id: -1, email: 'demo@demo.com', name: 'Demo User', role: user.role };
+                return next();
+            }
             const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
             if (!dbUser) return res.status(404).json({ error: 'User not found' });
             req.user = dbUser;

@@ -8,7 +8,7 @@ const authApi = {
     return axios.post('/auth/register', data, config)
   },
   logout: () => axios.post('/auth/logout'),
-  getProfile: () => axios.get('/users'),
+  getProfile: () => axios.get('/auth/me'),
   updateProfile: (data) => axios.put('/users', data),
   forgotPassword: (email) => axios.post('/auth/forgot-password', { email }),
   resetPassword: (data) => axios.post('/auth/reset-password', data),
