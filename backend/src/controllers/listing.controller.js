@@ -29,6 +29,37 @@ export const createListing = async (req, res) => {
 
 export const getListings = async (req, res) => {
     try {
+        // Demo fallback when DB is not available
+        if (req.user?.id === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json([
+                {
+                    id: 3001,
+                    title: 'Stanza luminosa in centro',
+                    description: 'Camera ammobiliata vicino al Duomo',
+                    price: 650,
+                    location: 'Milano',
+                    images: ['https://picsum.photos/seed/room1/600/400'],
+                    amenities: ['WiFi','Ascensore'],
+                    rules: ['No Fumatori'],
+                    availableFrom: null,
+                    roomType: 'SINGOLA',
+                    owner: { name: 'Alice Demo', avatar: 'https://i.pravatar.cc/300?u=alice' }
+                },
+                {
+                    id: 3002,
+                    title: 'Camera vicino alla metro',
+                    description: 'Ottimi collegamenti e zona tranquilla',
+                    price: 700,
+                    location: 'Roma',
+                    images: ['https://picsum.photos/seed/room2/600/400'],
+                    amenities: ['WiFi','Balcone'],
+                    rules: ['No Animali'],
+                    availableFrom: null,
+                    roomType: 'SINGOLA',
+                    owner: { name: 'Marco Demo', avatar: 'https://i.pravatar.cc/300?u=marco' }
+                }
+            ])
+        }
         const { q, priceMin, priceMax, location, amenities, rules, availableFrom, immediate, roomType } = req.query;
 
         const where = {};
@@ -115,6 +146,34 @@ export const getListings = async (req, res) => {
 export const getListingById = async (req, res) => {
     const { id } = req.params;
     try {
+        if (req.user?.id === -1 || req.user?.email?.endsWith('@demo.com')) {
+            const demo = id == 3002 ? {
+                id: 3002,
+                title: 'Camera vicino alla metro',
+                description: 'Ottimi collegamenti e zona tranquilla',
+                price: 700,
+                location: 'Roma',
+                images: ['https://picsum.photos/seed/room2/600/400'],
+                amenities: ['WiFi','Balcone'],
+                rules: ['No Animali'],
+                availableFrom: null,
+                roomType: 'SINGOLA',
+                owner: { name: 'Marco Demo', avatar: 'https://i.pravatar.cc/300?u=marco', email: 'seeker1@demo.com' }
+            } : {
+                id: 3001,
+                title: 'Stanza luminosa in centro',
+                description: 'Camera ammobiliata vicino al Duomo',
+                price: 650,
+                location: 'Milano',
+                images: ['https://picsum.photos/seed/room1/600/400'],
+                amenities: ['WiFi','Ascensore'],
+                rules: ['No Fumatori'],
+                availableFrom: null,
+                roomType: 'SINGOLA',
+                owner: { name: 'Alice Demo', avatar: 'https://i.pravatar.cc/300?u=alice', email: 'owner1@demo.com' }
+            }
+            return res.json(demo)
+        }
         const listing = await prisma.listing.findUnique({
             where: { id: parseInt(id) },
             include: { owner: { select: { name: true, avatar: true, email: true } } }
@@ -178,6 +237,9 @@ export const toggleFavorite = async (req, res) => {
     const userId = req.user.id;
     const listingId = parseInt(id);
     try {
+        if (userId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json({ favorited: true, count: 1 })
+        }
         const listing = await prisma.listing.findUnique({ where: { id: listingId } });
         if (!listing) return res.status(404).json({ error: 'Listing not found' });
 
@@ -202,6 +264,23 @@ export const toggleFavorite = async (req, res) => {
 export const getFavoriteListings = async (req, res) => {
     const userId = req.user.id;
     try {
+        if (userId === -1 || req.user?.email?.endsWith('@demo.com')) {
+            return res.json([
+                {
+                    id: 3001,
+                    title: 'Stanza luminosa in centro',
+                    description: 'Camera ammobiliata vicino al Duomo',
+                    price: 650,
+                    location: 'Milano',
+                    images: ['https://picsum.photos/seed/room1/600/400'],
+                    amenities: ['WiFi','Ascensore'],
+                    rules: ['No Fumatori'],
+                    availableFrom: null,
+                    roomType: 'SINGOLA',
+                    owner: { name: 'Alice Demo', avatar: 'https://i.pravatar.cc/300?u=alice' }
+                }
+            ])
+        }
         const favorites = await prisma.favorite.findMany({
             where: { userId },
             include: {

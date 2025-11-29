@@ -88,6 +88,14 @@ export const sendMessage = async (req, res) => {
                 createdAt: new Date().toISOString(),
                 sender: { id: senderId, name: 'Demo User', avatar: 'https://i.pravatar.cc/300?u=demo' }
             }
+            try {
+                const { io } = await import('../app.js');
+                io.to(String(receiverId)).emit('new_message', {
+                    matchId: parseInt(matchId),
+                    senderName: message.sender.name,
+                    content: message.content
+                });
+            } catch {}
             return res.json(message)
         }
         const message = await prisma.message.create({
