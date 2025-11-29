@@ -57,14 +57,26 @@ export const register = async (req, res) => {
         const uploadedPhotos = (req.files || []).map(f => `${req.protocol}://${req.get('host')}/uploads/${f.filename}`);
         let profilePhotos = uploadedPhotos;
         if (!profilePhotos || profilePhotos.length < 2) {
-            return res.status(400).json({ error: 'Debe subir al menos 2 fotos' });
+            if (process.env.REGISTRATION_RELAXED === 'true') {
+                const p1 = `https://i.pravatar.cc/300?u=${encodeURIComponent(email)}-1`;
+                const p2 = `https://i.pravatar.cc/300?u=${encodeURIComponent(email)}-2`;
+                profilePhotos = [p1, p2];
+            } else {
+                return res.status(400).json({ error: 'Debe subir al menos 2 fotos' });
+            }
         }
         if (profilePhotos.length > 6) {
             profilePhotos = profilePhotos.slice(0, 6);
         }
 
         if (!cityActual || !ciudadBusquedaPiso) {
-            return res.status(400).json({ error: 'Ciudad actual y ciudad de búsqueda son obligatorias' });
+            if (process.env.REGISTRATION_RELAXED === 'true') {
+                // Defaults para entorno relajado
+                req.body.cityActual = cityActual || 'Ciudad';
+                req.body.ciudadBusquedaPiso = ciudadBusquedaPiso || 'Ciudad';
+            } else {
+                return res.status(400).json({ error: 'Ciudad actual y ciudad de búsqueda son obligatorias' });
+            }
         }
 
         const roleMap = {
@@ -99,7 +111,11 @@ export const register = async (req, res) => {
             appModesArr = raw.filter(v => appModeValues.includes(v));
         }
         if (!appModesArr.length) {
-            return res.status(400).json({ error: 'Debe seleccionar al menos un modo de uso' });
+            if (process.env.REGISTRATION_RELAXED === 'true') {
+                appModesArr = ['SOLO_COMPARTIR_PISO'];
+            } else {
+                return res.status(400).json({ error: 'Debe seleccionar al menos un modo de uso' });
+            }
         }
 
         const objValues = ['CONVIVENCIA_TRANQUILA', 'AMBIENTE_SOCIAL', 'TEMPORAL', 'LARGO_PLAZO', 'NO_CLARO'];
