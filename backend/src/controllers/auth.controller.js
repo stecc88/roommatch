@@ -34,9 +34,9 @@ export const register = async (req, res) => {
         if (!email || !emailRegex.test(email)) {
             return res.status(400).json({ error: 'Email inválido' });
         }
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        const passwordRegex = /^.{6,}$/;
         if (!password || !passwordRegex.test(password)) {
-            return res.status(400).json({ error: 'Contraseña inválida' });
+            return res.status(400).json({ error: 'Contraseña inválida (mínimo 6 caracteres)' });
         }
 
         let birth;
@@ -57,26 +57,17 @@ export const register = async (req, res) => {
         const uploadedPhotos = (req.files || []).map(f => `${req.protocol}://${req.get('host')}/uploads/${f.filename}`);
         let profilePhotos = uploadedPhotos;
         if (!profilePhotos || profilePhotos.length < 2) {
-            if (process.env.REGISTRATION_RELAXED === 'true') {
-                const p1 = `https://i.pravatar.cc/300?u=${encodeURIComponent(email)}-1`;
-                const p2 = `https://i.pravatar.cc/300?u=${encodeURIComponent(email)}-2`;
-                profilePhotos = [p1, p2];
-            } else {
-                return res.status(400).json({ error: 'Debe subir al menos 2 fotos' });
-            }
+            const p1 = `https://i.pravatar.cc/300?u=${encodeURIComponent(email)}-1`;
+            const p2 = `https://i.pravatar.cc/300?u=${encodeURIComponent(email)}-2`;
+            profilePhotos = [p1, p2];
         }
         if (profilePhotos.length > 6) {
             profilePhotos = profilePhotos.slice(0, 6);
         }
 
         if (!cityActual || !ciudadBusquedaPiso) {
-            if (process.env.REGISTRATION_RELAXED === 'true') {
-                // Defaults para entorno relajado
-                req.body.cityActual = cityActual || 'Ciudad';
-                req.body.ciudadBusquedaPiso = ciudadBusquedaPiso || 'Ciudad';
-            } else {
-                return res.status(400).json({ error: 'Ciudad actual y ciudad de búsqueda son obligatorias' });
-            }
+            req.body.cityActual = cityActual || 'Ciudad';
+            req.body.ciudadBusquedaPiso = ciudadBusquedaPiso || 'Ciudad';
         }
 
         const roleMap = {
@@ -111,11 +102,7 @@ export const register = async (req, res) => {
             appModesArr = raw.filter(v => appModeValues.includes(v));
         }
         if (!appModesArr.length) {
-            if (process.env.REGISTRATION_RELAXED === 'true') {
-                appModesArr = ['SOLO_COMPARTIR_PISO'];
-            } else {
-                return res.status(400).json({ error: 'Debe seleccionar al menos un modo de uso' });
-            }
+            appModesArr = ['SOLO_COMPARTIR_PISO'];
         }
 
         const objValues = ['CONVIVENCIA_TRANQUILA', 'AMBIENTE_SOCIAL', 'TEMPORAL', 'LARGO_PLAZO', 'NO_CLARO'];
@@ -141,9 +128,21 @@ export const register = async (req, res) => {
             if (interestsArr.length > 5) interestsArr = interestsArr.slice(0, 5);
         }
 
+        let languagesArr = [];
+        if (req.body.languages) {
+            const { languages } = req.body;
+            languagesArr = Array.isArray(languages)
+                ? languages
+                : String(languages).split(',').map(s => s.trim()).filter(Boolean);
+            if (languagesArr.length > 5) languagesArr = languagesArr.slice(0, 5);
+        }
+
         const presupuesto = presupuestoAproximado ? parseInt(presupuestoAproximado) : null;
         const bioText = bio ? String(bio).slice(0, 500) : null;
-        const lifestyleJson = lifestyle ? (typeof lifestyle === 'string' ? JSON.parse(lifestyle) : lifestyle) : null;
+        let lifestyleJson = null;
+        try {
+            lifestyleJson = lifestyle ? (typeof lifestyle === 'string' ? JSON.parse(lifestyle) : lifestyle) : null;
+        } catch { lifestyleJson = null }
 
         const existing = await prisma.user.findUnique({ where: { email } });
         if (existing) {
@@ -161,12 +160,13 @@ export const register = async (req, res) => {
                 gender: genderValue,
                 bio: bioText,
                 profilePhotos,
-                cityActual,
-                ciudadBusquedaPiso,
+                cityActual: req.body.cityActual,
+                ciudadBusquedaPiso: req.body.ciudadBusquedaPiso,
                 prefieroCompartirCon: sharePref,
                 appModes: appModesArr,
                 objetivoConvivencia: objetivosArr,
                 interests: interestsArr,
+                languages: languagesArr,
                 presupuestoAproximado: presupuesto,
                 lifestyle: lifestyleJson || undefined,
             },
