@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
 import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline'
@@ -10,12 +10,28 @@ const Login = () => {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm()
   const { login } = useAuth()
   const [loading, setLoading] = useState(false)
+  const location = useLocation()
 
   const onSubmit = async (data) => {
     setLoading(true)
     await login(data.email, data.password)
     setLoading(false)
   }
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const demo = params.get('demo')?.toLowerCase()
+    const auto = async (email) => {
+      setLoading(true)
+      await login(email, 'password123')
+      setLoading(false)
+    }
+    if (demo === 'owner' || demo === 'propietario' || demo === 'proprietario') {
+      auto('owner1@demo.com')
+    } else if (demo === 'seeker' || demo === 'cercatore' || demo === 'buscador') {
+      auto('seeker1@demo.com')
+    }
+  }, [location.search])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center p-4">
